@@ -1,0 +1,17 @@
+# Goal: pick up a pile from a source support and deliver it to a target.
+string job_id
+uint32 source_branch_id
+float64 source_arclength_m
+uint32 target_branch_id
+float64 target_arclength_m
+---
+# Result
+bool success
+string failure_reason
+float64 final_lateral_error_mm
+float64 final_longitudinal_error_mm
+float64 total_time_s
+---
+# Feedback
+uint8 phase                   # mirrors DockingState.STATE_*
+float64 progress_arclength_m

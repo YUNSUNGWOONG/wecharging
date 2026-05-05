@@ -1,0 +1,60 @@
+<?xml version="1.0"?>
+<!--
+  Closed-loop ceiling track (paper 4.1):
+    two 3.5 m straight sections + two 0.8 m radius curves.
+  Built from 4060 aluminum profile, suspended from above.
+  For Phase-0 sim we model the centerline as a static fixture; the robot
+  follows the centerline via the prismatic constraint in skyvolt_robot.urdf.xacro.
+-->
+<robot name="skyvolt_track" xmlns:xacro="http://www.ros.org/wiki/xacro">
+  <xacro:property name="rail_h" value="0.040"/>
+  <xacro:property name="rail_w" value="0.060"/>
+  <xacro:property name="straight_l" value="3.5"/>
+  <xacro:property name="curve_r" value="0.8"/>
+  <xacro:property name="ceiling_z" value="2.5"/>
+
+  <link name="track_root"/>
+
+  <xacro:macro name="straight_segment" params="name x y yaw">
+    <link name="${name}">
+      <visual>
+        <origin xyz="0 0 0"/>
+        <geometry><box size="${straight_l} ${rail_w} ${rail_h}"/></geometry>
+        <material name="alu_grey"><color rgba="0.78 0.78 0.80 1.0"/></material>
+      </visual>
+      <collision>
+        <geometry><box size="${straight_l} ${rail_w} ${rail_h}"/></geometry>
+      </collision>
+      <inertial><mass value="20"/>
+        <inertia ixx="0.5" ixy="0" ixz="0" iyy="0.5" iyz="0" izz="0.5"/>
+      </inertial>
+    </link>
+    <joint name="${name}_to_root" type="fixed">
+      <parent link="track_root"/>
+      <child  link="${name}"/>
+      <origin xyz="${x} ${y} ${ceiling_z}" rpy="0 0 ${yaw}"/>
+    </joint>
+  </xacro:macro>
+
+  <xacro:straight_segment name="rail_north" x="0"  y="${ curve_r}" yaw="0"/>
+  <xacro:straight_segment name="rail_south" x="0"  y="${-curve_r}" yaw="0"/>
+
+  <!--
+    Curves are approximated by 8 box segments per quarter for visual clarity.
+    Real loaded geometry is in the SDF world; this is just the kinematic frame.
+  -->
+  <link name="curve_east_marker"/>
+  <joint name="curve_east_to_root" type="fixed">
+    <parent link="track_root"/>
+    <child  link="curve_east_marker"/>
+    <origin xyz="${straight_l/2} 0 ${ceiling_z}"/>
+  </joint>
+
+  <link name="curve_west_marker"/>
+  <joint name="curve_west_to_root" type="fixed">
+    <parent link="track_root"/>
+    <child  link="curve_west_marker"/>
+    <origin xyz="${-straight_l/2} 0 ${ceiling_z}"/>
+  </joint>
+
+</robot>

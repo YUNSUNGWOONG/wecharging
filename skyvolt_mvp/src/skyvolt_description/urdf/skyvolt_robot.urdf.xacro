@@ -1,0 +1,118 @@
+<?xml version="1.0"?>
+<!--
+  SkyvoltRobot suspended chassis.
+  Dimensions and masses from the paper (section 4.2.1):
+    chassis 500x350x210 mm, total loaded mass 18.25 kg.
+  Wheel layout: 4 suspension support wheels (2 driven), 4 side guide wheels,
+  2 bottom auxiliary wheels.
+
+  In Phase 0 we keep visuals simple (boxes/cylinders); detailed meshes plug
+  into the same link names later.
+-->
+<robot name="skyvolt_robot" xmlns:xacro="http://www.ros.org/wiki/xacro">
+
+  <xacro:arg name="robot_id" default="r0"/>
+  <xacro:property name="robot_id" value="$(arg robot_id)"/>
+
+  <xacro:property name="chassis_l" value="0.500"/>
+  <xacro:property name="chassis_w" value="0.350"/>
+  <xacro:property name="chassis_h" value="0.210"/>
+  <xacro:property name="chassis_mass" value="18.25"/>
+  <xacro:property name="wheel_r" value="0.030"/>
+  <xacro:property name="wheel_w" value="0.020"/>
+
+  <xacro:macro name="box_inertia" params="m x y z">
+    <inertia ixx="${m*(y*y+z*z)/12}" ixy="0" ixz="0"
+             iyy="${m*(x*x+z*z)/12}" iyz="0"
+             izz="${m*(x*x+y*y)/12}"/>
+  </xacro:macro>
+
+  <link name="${robot_id}/base_footprint"/>
+
+  <link name="${robot_id}/chassis">
+    <visual>
+      <origin xyz="0 0 0"/>
+      <geometry><box size="${chassis_l} ${chassis_w} ${chassis_h}"/></geometry>
+      <material name="skyvolt_blue"><color rgba="0.16 0.45 0.78 1.0"/></material>
+    </visual>
+    <collision>
+      <geometry><box size="${chassis_l} ${chassis_w} ${chassis_h}"/></geometry>
+    </collision>
+    <inertial>
+      <mass value="${chassis_mass}"/>
+      <xacro:box_inertia m="${chassis_mass}" x="${chassis_l}" y="${chassis_w}" z="${chassis_h}"/>
+    </inertial>
+  </link>
+
+  <!--
+    The robot is suspended from a track. We model the constraint as a
+    prismatic joint along X for the simulator (kinematic). For physics-
+    accurate sim, replace with wheel contacts; the localizer code does not
+    care which approach is used.
+  -->
+  <joint name="${robot_id}/track_slide" type="prismatic">
+    <parent link="${robot_id}/base_footprint"/>
+    <child link="${robot_id}/chassis"/>
+    <axis xyz="1 0 0"/>
+    <limit lower="-1e6" upper="1e6" effort="100" velocity="2.0"/>
+    <origin xyz="0 0 -0.30" rpy="0 0 0"/>
+  </joint>
+
+  <!-- Manipulator: Y-axis telescopic + X-axis latch (paper 4.2.3) -->
+  <link name="${robot_id}/telescope">
+    <visual>
+      <origin xyz="0 0 -0.10"/>
+      <geometry><box size="0.15 0.30 0.20"/></geometry>
+      <material name="metal_grey"><color rgba="0.5 0.5 0.55 1.0"/></material>
+    </visual>
+    <inertial>
+      <mass value="1.5"/>
+      <xacro:box_inertia m="1.5" x="0.15" y="0.30" z="0.20"/>
+    </inertial>
+  </link>
+
+  <joint name="${robot_id}/telescope_y" type="prismatic">
+    <parent link="${robot_id}/chassis"/>
+    <child  link="${robot_id}/telescope"/>
+    <axis xyz="0 1 0"/>
+    <!-- 320 mm stroke, paper section 5 -->
+    <limit lower="0.0" upper="0.32" effort="50" velocity="0.1"/>
+    <origin xyz="0 0 -0.105" rpy="0 0 0"/>
+  </joint>
+
+  <link name="${robot_id}/latch">
+    <visual>
+      <geometry><cylinder radius="0.008" length="0.05"/></geometry>
+      <origin rpy="0 1.5708 0"/>
+      <material name="latch_orange"><color rgba="0.9 0.5 0.1 1.0"/></material>
+    </visual>
+    <inertial>
+      <mass value="0.05"/>
+      <inertia ixx="1e-5" ixy="0" ixz="0" iyy="1e-5" iyz="0" izz="1e-5"/>
+    </inertial>
+  </link>
+
+  <joint name="${robot_id}/latch_x" type="prismatic">
+    <parent link="${robot_id}/telescope"/>
+    <child  link="${robot_id}/latch"/>
+    <axis xyz="1 0 0"/>
+    <limit lower="0.0" upper="0.04" effort="20" velocity="0.05"/>
+    <origin xyz="0.06 0 -0.10"/>
+  </joint>
+
+  <!-- Sensor frames (no geometry; published by sim plugins) -->
+  <link name="${robot_id}/rfid_reader"/>
+  <joint name="${robot_id}/rfid_mount" type="fixed">
+    <parent link="${robot_id}/chassis"/>
+    <child  link="${robot_id}/rfid_reader"/>
+    <origin xyz="0 0 0.10"/>
+  </joint>
+
+  <link name="${robot_id}/photoeye"/>
+  <joint name="${robot_id}/photoeye_mount" type="fixed">
+    <parent link="${robot_id}/chassis"/>
+    <child  link="${robot_id}/photoeye"/>
+    <origin xyz="0.05 0 0.10"/>
+  </joint>
+
+</robot>

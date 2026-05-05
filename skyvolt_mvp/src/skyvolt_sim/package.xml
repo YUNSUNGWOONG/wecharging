@@ -1,0 +1,18 @@
+<?xml version="1.0"?>
+<package format="3">
+  <name>skyvolt_sim</name>
+  <version>0.1.0</version>
+  <description>Gazebo Garden world and launch files for the SkyvoltRobot MVP.</description>
+  <maintainer email="re@skyvolt.example">Skyvolt RE</maintainer>
+  <license>Apache-2.0</license>
+
+  <buildtool_depend>ament_cmake</buildtool_depend>
+  <exec_depend>ros_gz_sim</exec_depend>
+  <exec_depend>ros_gz_bridge</exec_depend>
+  <exec_depend>skyvolt_description</exec_depend>
+  <exec_depend>skyvolt_msgs</exec_depend>
+
+  <export>
+    <build_type>ament_cmake</build_type>
+  </export>
+</package>

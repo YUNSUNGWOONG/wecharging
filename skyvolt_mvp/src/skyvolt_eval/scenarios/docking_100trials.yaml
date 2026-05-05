@@ -1,0 +1,19 @@
+# Default regression scenario.
+trials: 100
+seed: 1
+config:
+  track_length_m: 12.0
+  cue_arclength_m: 9.0
+  pos_arclength_m: 10.5
+  target_arclength_m: 11.0
+  photoeye_arclength_m: 11.0
+  rfid_cone_radius_m: 0.025
+  photoeye_jitter_m: 0.001
+  encoder_noise_sigma: 0.02
+  dt_s: 0.02
+  cruise_v_mps: 1.5
+gates:
+  dock_rate_min: 0.99
+  long_err_p99_mm_max: 12.0
+  lat_err_p99_mm_max: 4.0
+  elapsed_p99_s_max: 13.0

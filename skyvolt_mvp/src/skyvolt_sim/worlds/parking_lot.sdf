@@ -1,0 +1,88 @@
+<?xml version="1.0" ?>
+<!--
+  Phase 0 underground parking lot world.
+  Floor + ceiling + a row of parking-stall markers + the closed-loop track.
+  Lighting and physics tuned for headless CI.
+-->
+<sdf version="1.9">
+  <world name="parking_lot">
+    <gravity>0 0 -9.81</gravity>
+
+    <plugin filename="gz-sim-physics-system" name="gz::sim::systems::Physics"/>
+    <plugin filename="gz-sim-user-commands-system" name="gz::sim::systems::UserCommands"/>
+    <plugin filename="gz-sim-scene-broadcaster-system" name="gz::sim::systems::SceneBroadcaster"/>
+    <plugin filename="gz-sim-sensors-system" name="gz::sim::systems::Sensors"/>
+
+    <light name="ambient" type="directional">
+      <pose>0 0 5 0 0 0</pose>
+      <diffuse>0.85 0.85 0.85 1</diffuse>
+      <specular>0.2 0.2 0.2 1</specular>
+      <direction>0 0 -1</direction>
+    </light>
+
+    <model name="floor">
+      <static>true</static>
+      <link name="link">
+        <collision name="col"><geometry><plane>
+          <normal>0 0 1</normal><size>30 30</size>
+        </plane></geometry></collision>
+        <visual name="vis"><geometry><plane>
+          <normal>0 0 1</normal><size>30 30</size>
+        </plane></geometry>
+          <material><ambient>0.20 0.20 0.22 1</ambient><diffuse>0.20 0.20 0.22 1</diffuse></material>
+        </visual>
+      </link>
+    </model>
+
+    <model name="ceiling">
+      <static>true</static>
+      <pose>0 0 2.7 0 0 0</pose>
+      <link name="link">
+        <visual name="vis"><geometry><box><size>30 30 0.05</size></box></geometry>
+          <material><ambient>0.85 0.85 0.85 1</ambient></material></visual>
+      </link>
+    </model>
+
+    <!--
+      Closed-loop track: 2 straights (3.5 m) + 2 curves (R=0.8 m).
+      Built from box primitives. Real geometry is the centerline; the robot
+      sim plugin reads centerline arclength from a simple analytical model.
+    -->
+    <model name="track_north">
+      <static>true</static>
+      <pose>0 0.8 2.5 0 0 0</pose>
+      <link name="rail"><visual name="v"><geometry><box>
+        <size>3.5 0.06 0.04</size>
+      </box></geometry>
+        <material><ambient>0.78 0.78 0.80 1</ambient></material></visual></link>
+    </model>
+
+    <model name="track_south">
+      <static>true</static>
+      <pose>0 -0.8 2.5 0 0 0</pose>
+      <link name="rail"><visual name="v"><geometry><box>
+        <size>3.5 0.06 0.04</size>
+      </box></geometry>
+        <material><ambient>0.78 0.78 0.80 1</ambient></material></visual></link>
+    </model>
+
+    <!-- 4 support points for charging piles, two per side -->
+    <model name="support_n1"><static>true</static>
+      <pose>-1.0 0.8 2.45 0 0 0</pose>
+      <link name="l"><visual name="v"><geometry><box><size>0.10 0.10 0.10</size></box></geometry>
+        <material><ambient>0.9 0.9 0.2 1</ambient></material></visual></link></model>
+    <model name="support_n2"><static>true</static>
+      <pose>1.0 0.8 2.45 0 0 0</pose>
+      <link name="l"><visual name="v"><geometry><box><size>0.10 0.10 0.10</size></box></geometry>
+        <material><ambient>0.9 0.9 0.2 1</ambient></material></visual></link></model>
+    <model name="support_s1"><static>true</static>
+      <pose>-1.0 -0.8 2.45 0 0 0</pose>
+      <link name="l"><visual name="v"><geometry><box><size>0.10 0.10 0.10</size></box></geometry>
+        <material><ambient>0.9 0.9 0.2 1</ambient></material></visual></link></model>
+    <model name="support_s2"><static>true</static>
+      <pose>1.0 -0.8 2.45 0 0 0</pose>
+      <link name="l"><visual name="v"><geometry><box><size>0.10 0.10 0.10</size></box></geometry>
+        <material><ambient>0.9 0.9 0.2 1</ambient></material></visual></link></model>
+
+  </world>
+</sdf>
