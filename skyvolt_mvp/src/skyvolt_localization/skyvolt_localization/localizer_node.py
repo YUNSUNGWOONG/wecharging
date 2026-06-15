@@ -2,6 +2,7 @@
 
 Subscribes:
     /<robot_id>/odom            nav_msgs/Odometry      (provides linear vel)
+    /<robot_id>/imu             sensor_msgs/Imu        (tangential accel)
     /<robot_id>/rfid            skyvolt_msgs/RfidDetection
     /<robot_id>/photoeye        skyvolt_msgs/PhotoeyeDetection
 Publishes:
@@ -13,6 +14,7 @@ try:
     import rclpy
     from rclpy.node import Node
     from nav_msgs.msg import Odometry
+    from sensor_msgs.msg import Imu
     from skyvolt_msgs.msg import (RfidDetection, PhotoeyeDetection, TrackState)
     HAVE_ROS = True
 except Exception:
@@ -30,8 +32,11 @@ if HAVE_ROS:
             self.robot_id = self.get_parameter("robot_id").value
             self.loc = TrackLocalizer()
             self._last_t = self.get_clock().now()
+            # Latest IMU tangential accel, consumed once per predict tick.
+            self._pending_accel = None
 
             self.create_subscription(Odometry, "odom", self._odom_cb, 50)
+            self.create_subscription(Imu, "imu", self._imu_cb, 50)
             self.create_subscription(RfidDetection, "rfid", self._rfid_cb, 50)
             self.create_subscription(PhotoeyeDetection, "photoeye",
                                      self._photo_cb, 50)
@@ -42,7 +47,10 @@ if HAVE_ROS:
             now = self.get_clock().now()
             dt = (now - self._last_t).nanoseconds * 1e-9
             self._last_t = now
-            self.loc.predict(dt)
+            # Use the freshest IMU accel as a control input, then clear it so a
+            # dropped IMU stream falls back to the constant-velocity model.
+            accel, self._pending_accel = self._pending_accel, None
+            self.loc.predict(dt, accel_mps2=accel)
             s, ds = self.loc.state
             msg = TrackState()
             msg.stamp = now.to_msg()
@@ -55,6 +63,10 @@ if HAVE_ROS:
 
         def _odom_cb(self, m: "Odometry") -> None:
             self.loc.update_odom(m.twist.twist.linear.x)
+
+        def _imu_cb(self, m: "Imu") -> None:
+            # Tangential (along-track) acceleration; x is the travel axis.
+            self._pending_accel = float(m.linear_acceleration.x)
 
         def _rfid_cb(self, m: "RfidDetection") -> None:
             kind = {1: "cue", 2: "positioning", 3: "docking"}.get(int(m.kind), "cue")

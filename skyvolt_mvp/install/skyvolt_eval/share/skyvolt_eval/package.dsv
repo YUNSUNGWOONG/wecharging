@@ -1,0 +1,12 @@
+source;share/skyvolt_eval/hook/path.ps1
+source;share/skyvolt_eval/hook/path.dsv
+source;share/skyvolt_eval/hook/path.sh
+source;share/skyvolt_eval/hook/pythonpath.ps1
+source;share/skyvolt_eval/hook/pythonpath.dsv
+source;share/skyvolt_eval/hook/pythonpath.sh
+source;share/skyvolt_eval/hook/pythonscriptspath.ps1
+source;share/skyvolt_eval/hook/pythonscriptspath.dsv
+source;share/skyvolt_eval/hook/pythonscriptspath.sh
+source;share/skyvolt_eval/hook/ament_prefix_path.ps1
+source;share/skyvolt_eval/hook/ament_prefix_path.dsv
+source;share/skyvolt_eval/hook/ament_prefix_path.sh

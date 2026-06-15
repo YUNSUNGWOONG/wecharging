@@ -1,0 +1,24 @@
+// generated from rosidl_adapter/resource/msg.idl.em
+// with input from skyvolt_msgs/msg/PhotoeyeDetection.msg
+// generated code does not contain a copyright notice
+
+#include "builtin_interfaces/msg/Time.idl"
+
+module skyvolt_msgs {
+  module msg {
+    @verbatim (language="comment", text=
+      "Photoelectric sensor binary state at the docking card." "\n"
+      "When triggered, the robot must stop immediately (paper Fig.3d).")
+    struct PhotoeyeDetection {
+      builtin_interfaces::msg::Time stamp;
+
+      string robot_id;
+
+      boolean triggered;
+
+      @verbatim (language="comment", text=
+        "if known")
+      string docking_card_id;
+    };
+  };
+};

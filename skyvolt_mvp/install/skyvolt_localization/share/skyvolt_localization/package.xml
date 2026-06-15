@@ -1,0 +1,19 @@
+<?xml version="1.0"?>
+<package format="3">
+  <name>skyvolt_localization</name>
+  <version>0.1.0</version>
+  <description>Track-arclength Kalman filter and two-stage docking speed policy.</description>
+  <maintainer email="re@skyvolt.example">Skyvolt RE</maintainer>
+  <license>Apache-2.0</license>
+
+  <buildtool_depend>ament_python</buildtool_depend>
+  <depend>rclpy</depend>
+  <depend>skyvolt_msgs</depend>
+  <depend>std_msgs</depend>
+  <depend>geometry_msgs</depend>
+  <depend>nav_msgs</depend>
+
+  <export>
+    <build_type>ament_python</build_type>
+  </export>
+</package>

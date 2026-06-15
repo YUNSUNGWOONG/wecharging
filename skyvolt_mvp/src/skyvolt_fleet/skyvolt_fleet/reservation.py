@@ -79,6 +79,27 @@ class ReservationTable:
             self._by_segment[seg_id] = kept
         return count
 
+    def reclaim_expired(self, now_s: float, grace_s: float = 0.0) -> list[str]:
+        """Timeout-based deadlock recovery.
+
+        A robot is presumed stuck when its *entire* route is overdue: the latest
+        exit time across all its reservations has passed by more than grace_s,
+        yet the reservations were never released (a healthy robot releases on
+        arrival, well before this). Such a robot's reservations are freed so its
+        segments stop wedging the rest of the fleet. Returns the reclaimed robot
+        ids (callers should fault/re-task those robots).
+        """
+        latest: dict[str, float] = {}
+        for lst in self._by_segment.values():
+            for r in lst:
+                latest[r.robot_id] = max(latest.get(r.robot_id, float("-inf")),
+                                         r.t_exit)
+        stuck = sorted(rid for rid, t_exit in latest.items()
+                       if t_exit + grace_s < now_s)
+        for rid in stuck:
+            self.release_robot(rid)
+        return stuck
+
     def active_for(self, robot_id: str) -> list[Reservation]:
         out: list[Reservation] = []
         for lst in self._by_segment.values():

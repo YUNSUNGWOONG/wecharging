@@ -22,6 +22,7 @@ setup(
         "console_scripts": [
             "fleet_manager_node = skyvolt_fleet.fleet_manager_node:main",
             "fleet_api = skyvolt_fleet.api_server:main",
+            "fleet_sim = skyvolt_fleet.fleet_sim:main",
         ],
     },
 )

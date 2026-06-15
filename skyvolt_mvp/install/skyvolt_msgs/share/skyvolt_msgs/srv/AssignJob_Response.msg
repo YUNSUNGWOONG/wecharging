@@ -1,0 +1,4 @@
+
+bool accepted
+string assigned_robot_id
+string reason         # populated on rejection

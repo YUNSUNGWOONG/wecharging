@@ -28,6 +28,9 @@ from typing import Optional
 
 import numpy as np
 
+# Add sibling package skyvolt_localization to sys.path so we can import it standalone
+sys.path.insert(0, str(Path(__file__).resolve().parent.parent.parent / "skyvolt_localization"))
+
 from skyvolt_localization.track_localizer import (
     TrackLocalizer, RfidObservation, PhotoeyeObservation,
 )
@@ -220,16 +223,6 @@ def main(argv=None) -> int:
         print("FAIL:", "; ".join(fails), file=sys.stderr)
         return 1
     print("PASS")
-    return 0
-
-
-if __name__ == "__main__":  # pragma: no cover
-    sys.exit(main())
-    return 0
-
-
-if __name__ == "__main__":  # pragma: no cover
-    sys.exit(main())
     return 0
 
 

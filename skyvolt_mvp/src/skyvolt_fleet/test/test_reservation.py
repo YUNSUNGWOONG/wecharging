@@ -44,3 +44,35 @@ def test_release_robot_clears_only_that_robots_entries():
     t.admit(Reservation("r0", 2, 0, 2))
     assert t.release_robot("r0") == 2
     assert t.num_reservations() == 1
+
+
+# --- timeout-based deadlock recovery ---------------------------------------
+def test_reclaim_expired_frees_a_fully_overdue_robot():
+    t = ReservationTable()
+    t.admit(Reservation("r0", 1, 0, 2))      # whole route exits by t=4
+    t.admit(Reservation("r0", 2, 2, 4))
+    t.admit(Reservation("r1", 3, 0, 50))     # still active far into the future
+    reclaimed = t.reclaim_expired(now_s=10.0, grace_s=1.0)
+    assert reclaimed == ["r0"]
+    assert t.active_for("r0") == []
+    assert len(t.active_for("r1")) == 1      # untouched
+
+
+def test_reclaim_respects_grace_and_latest_exit():
+    t = ReservationTable()
+    t.admit(Reservation("r0", 1, 0, 2))
+    t.admit(Reservation("r0", 2, 2, 9))      # latest exit = 9
+    # now just past the early segment but before latest+grace -> not stuck yet
+    assert t.reclaim_expired(now_s=8.0, grace_s=1.0) == []
+    assert len(t.active_for("r0")) == 2
+    # now beyond latest exit + grace -> reclaimed
+    assert t.reclaim_expired(now_s=10.5, grace_s=1.0) == ["r0"]
+
+
+def test_reclaim_returns_all_stuck_robots_sorted():
+    t = ReservationTable()
+    t.admit(Reservation("r2", 1, 0, 1))
+    t.admit(Reservation("r0", 2, 0, 1))
+    reclaimed = t.reclaim_expired(now_s=5.0)
+    assert reclaimed == ["r0", "r2"]
+    assert t.num_reservations() == 0

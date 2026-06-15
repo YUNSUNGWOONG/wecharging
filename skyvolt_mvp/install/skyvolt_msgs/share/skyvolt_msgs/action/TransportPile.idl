@@ -1,0 +1,44 @@
+// generated from rosidl_adapter/resource/action.idl.em
+// with input from skyvolt_msgs/action/TransportPile.action
+// generated code does not contain a copyright notice
+
+
+module skyvolt_msgs {
+  module action {
+    @verbatim (language="comment", text=
+      "Goal: pick up a pile from a source support and deliver it to a target.")
+    struct TransportPile_Goal {
+      string job_id;
+
+      uint32 source_branch_id;
+
+      double source_arclength_m;
+
+      uint32 target_branch_id;
+
+      double target_arclength_m;
+    };
+    @verbatim (language="comment", text=
+      "Result")
+    struct TransportPile_Result {
+      boolean success;
+
+      string failure_reason;
+
+      double final_lateral_error_mm;
+
+      double final_longitudinal_error_mm;
+
+      double total_time_s;
+    };
+    @verbatim (language="comment", text=
+      "Feedback")
+    struct TransportPile_Feedback {
+      @verbatim (language="comment", text=
+        "mirrors DockingState.STATE_*")
+      uint8 phase;
+
+      double progress_arclength_m;
+    };
+  };
+};

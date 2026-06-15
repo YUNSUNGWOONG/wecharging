@@ -1,0 +1,33 @@
+// generated from rosidl_adapter/resource/msg.idl.em
+// with input from skyvolt_msgs/msg/ChargingJob.msg
+// generated code does not contain a copyright notice
+
+#include "builtin_interfaces/msg/Time.idl"
+
+module skyvolt_msgs {
+  module msg {
+    @verbatim (language="comment", text=
+      "A request to deliver a charging pile to a target support point.")
+    struct ChargingJob {
+      string job_id;
+
+      @verbatim (language="comment", text=
+        "vehicle / parking-spot identifier")
+      string requester_id;
+
+      uint32 target_branch_id;
+
+      double target_arclength_m;
+
+      builtin_interfaces::msg::Time submitted_at;
+
+      @verbatim (language="comment", text=
+        "0 = no deadline")
+      builtin_interfaces::msg::Time deadline;
+
+      @verbatim (language="comment", text=
+        "0=low, 255=urgent")
+      uint8 priority;
+    };
+  };
+};

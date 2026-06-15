@@ -21,6 +21,7 @@ setup(
     entry_points={
         "console_scripts": [
             "docking_eval = skyvolt_eval.docking_eval:main",
+            "replay = skyvolt_eval.replay:main",
         ],
     },
 )

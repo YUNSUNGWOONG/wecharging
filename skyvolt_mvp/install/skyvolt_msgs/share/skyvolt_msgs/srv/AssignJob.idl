@@ -1,0 +1,22 @@
+// generated from rosidl_adapter/resource/srv.idl.em
+// with input from skyvolt_msgs/srv/AssignJob.srv
+// generated code does not contain a copyright notice
+
+#include "skyvolt_msgs/msg/ChargingJob.idl"
+
+module skyvolt_msgs {
+  module srv {
+    struct AssignJob_Request {
+      skyvolt_msgs::msg::ChargingJob job;
+    };
+    struct AssignJob_Response {
+      boolean accepted;
+
+      string assigned_robot_id;
+
+      @verbatim (language="comment", text=
+        "populated on rejection")
+      string reason;
+    };
+  };
+};
