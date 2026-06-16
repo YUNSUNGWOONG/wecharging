@@ -1,0 +1,114 @@
+{
+  "title": "SkyvoltRobot Fleet Health",
+  "uid": "skyvolt-fleet-health",
+  "schemaVersion": 39,
+  "version": 1,
+  "editable": true,
+  "refresh": "5s",
+  "time": { "from": "now-1h", "to": "now" },
+  "tags": ["skyvolt", "fleet", "safety"],
+  "templating": { "list": [] },
+  "annotations": { "list": [] },
+  "panels": [
+    {
+      "id": 1,
+      "title": "Robots busy / total",
+      "type": "timeseries",
+      "datasource": { "type": "prometheus", "uid": "prometheus" },
+      "gridPos": { "h": 8, "w": 12, "x": 0, "y": 0 },
+      "fieldConfig": { "defaults": { "unit": "short", "min": 0 }, "overrides": [] },
+      "targets": [
+        { "refId": "A", "expr": "skyvolt_robots_busy", "legendFormat": "busy" },
+        { "refId": "B", "expr": "skyvolt_robots_total", "legendFormat": "total" }
+      ]
+    },
+    {
+      "id": 2,
+      "title": "Job queue depth",
+      "type": "timeseries",
+      "datasource": { "type": "prometheus", "uid": "prometheus" },
+      "gridPos": { "h": 8, "w": 12, "x": 12, "y": 0 },
+      "fieldConfig": { "defaults": { "unit": "short", "min": 0 }, "overrides": [] },
+      "targets": [
+        { "refId": "A", "expr": "skyvolt_jobs_queued", "legendFormat": "queued" }
+      ]
+    },
+    {
+      "id": 3,
+      "title": "Jobs completed",
+      "type": "timeseries",
+      "datasource": { "type": "prometheus", "uid": "prometheus" },
+      "gridPos": { "h": 8, "w": 12, "x": 0, "y": 8 },
+      "fieldConfig": { "defaults": { "unit": "short" }, "overrides": [] },
+      "targets": [
+        { "refId": "A", "expr": "rate(skyvolt_jobs_completed_total[5m])",
+          "legendFormat": "jobs/s" }
+      ]
+    },
+    {
+      "id": 4,
+      "title": "Active reservations",
+      "type": "timeseries",
+      "datasource": { "type": "prometheus", "uid": "prometheus" },
+      "gridPos": { "h": 8, "w": 12, "x": 12, "y": 8 },
+      "fieldConfig": { "defaults": { "unit": "short", "min": 0 }, "overrides": [] },
+      "targets": [
+        { "refId": "A", "expr": "skyvolt_reservations_active",
+          "legendFormat": "reservations" }
+      ]
+    },
+    {
+      "id": 5,
+      "title": "E-stop",
+      "type": "stat",
+      "datasource": { "type": "prometheus", "uid": "prometheus" },
+      "gridPos": { "h": 6, "w": 8, "x": 0, "y": 16 },
+      "fieldConfig": {
+        "defaults": {
+          "mappings": [
+            { "type": "value", "options": { "0": { "text": "ARMED", "color": "green" } } },
+            { "type": "value", "options": { "1": { "text": "TRIPPED", "color": "red" } } }
+          ],
+          "thresholds": { "steps": [
+            { "color": "green", "value": null }, { "color": "red", "value": 1 } ] }
+        },
+        "overrides": []
+      },
+      "targets": [
+        { "refId": "A", "expr": "skyvolt_estop_tripped" }
+      ]
+    },
+    {
+      "id": 6,
+      "title": "Rail load (N)",
+      "type": "gauge",
+      "datasource": { "type": "prometheus", "uid": "prometheus" },
+      "gridPos": { "h": 6, "w": 8, "x": 8, "y": 16 },
+      "fieldConfig": {
+        "defaults": {
+          "unit": "none", "min": 0, "max": 2000,
+          "thresholds": { "steps": [
+            { "color": "green", "value": null },
+            { "color": "yellow", "value": 1500 },
+            { "color": "red", "value": 1900 } ] }
+        },
+        "overrides": []
+      },
+      "targets": [
+        { "refId": "A", "expr": "skyvolt_rail_load_newtons" }
+      ]
+    },
+    {
+      "id": 7,
+      "title": "Track tilt (deg)",
+      "type": "timeseries",
+      "datasource": { "type": "prometheus", "uid": "prometheus" },
+      "gridPos": { "h": 6, "w": 8, "x": 16, "y": 16 },
+      "fieldConfig": { "defaults": { "unit": "degree" }, "overrides": [] },
+      "targets": [
+        { "refId": "A", "expr": "skyvolt_track_tilt_degrees",
+          "legendFormat": "tilt" }
+      ]
+    }
+  ]
+}

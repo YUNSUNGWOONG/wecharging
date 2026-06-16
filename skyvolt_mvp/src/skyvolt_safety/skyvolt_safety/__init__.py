@@ -9,6 +9,7 @@ from .load_monitor import (
 from .estop import EStopChain, EStopState, COMMS_SOURCE
 from .metrics import MetricsRegistry, FleetSnapshot, fleet_health_text
 from .ota import OtaUpdater, OtaState, FirmwareImage
+from .metrics_server import MetricsServer
 
 __all__ = [
     "LoadMonitor",
@@ -24,4 +25,5 @@ __all__ = [
     "OtaUpdater",
     "OtaState",
     "FirmwareImage",
+    "MetricsServer",
 ]

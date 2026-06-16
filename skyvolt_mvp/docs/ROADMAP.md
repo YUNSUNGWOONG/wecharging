@@ -43,8 +43,10 @@
 - [~] Vision module (paper 2: Z-Axis Charging) — RGB-D detection of pile pose
       → skyvolt_vision package: Kabsch/Umeyama 6-DoF port pose from feature
         points (+ reflection guard, fit RMSE), feeds reach/lateral to the
-        manipulator. 9 tests. Gazebo RGB-D camera wired (publishes image/depth/
-        points over the bridge); image feature front-end still pending.
+        manipulator. Gazebo RGB-D camera wired (publishes image/depth/points).
+        Feature front-end (skyvolt_vision/detector.py): threshold socket ->
+        4 corners -> deproject with depth+intrinsics -> 3D points; full chain
+        image->detect->pose->servo->dock tested on synthetic RGB-D. 15 tests.
 - [~] Closed-loop visual servoing for plug insertion
       → skyvolt_vision/servo.py: align(proportional)->insert->dock controller,
         consumes the estimated port pose, closed-loop tested vs a kinematic
@@ -70,11 +72,10 @@
       → skyvolt_safety/ota.py: OtaUpdater staged FSM (download→verify→stage→
         activate→active) with checksum verify + health-check rollback; the
         known-good version commits only on success. 9 tests. Transport pending.
-- [~] Prometheus metrics + Grafana board for fleet health
-      → skyvolt_safety/metrics.py: MetricsRegistry + fleet_health_text() render
-        fleet/safety state (utilization, queue, reservations, e-stop, rail load,
-        tilt) as Prometheus exposition text. 7 tests. HTTP /metrics + Grafana
-        board pending.
+- [x] Prometheus metrics + Grafana board for fleet health
+      → skyvolt_safety: metrics.py renders fleet/safety state as Prometheus
+        text; metrics_server.py serves it on HTTP /metrics (stdlib, live
+        provider); grafana/fleet_health.json dashboard (7 panels). 12 tests.
 
 ## Decision log
 

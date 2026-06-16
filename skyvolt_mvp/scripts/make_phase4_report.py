@@ -93,10 +93,10 @@ story += [table([
     ["작업", "성격", "상태"],
     ["트랙 하중·기울기 모니터링", "순수 SW", "완료"],
     ["E-stop 체인 (HW + SW 폴백)", "순수 SW", "완료"],
-    ["Prometheus/Grafana 플릿 헬스", "순수 SW", "메트릭 완료"],
+    ["Prometheus/Grafana 플릿 헬스", "순수 SW", "완료"],
     ["OTA 펌웨어 업데이트 경로", "순수 SW", "FSM 완료"],
 ], [8.6 * cm, 3.0 * cm, 2.4 * cm])]
-story += [P("이번 증분: skyvolt_safety 패키지 + 테스트 33개. 저장소 전체 138개 통과.", cap)]
+story += [P("이번 증분: skyvolt_safety 패키지 + 테스트 38개. 저장소 전체 149개 통과.", cap)]
 
 # 2. 하중 모니터
 story += [P("2. 트랙 하중·기울기 모니터링", h1)]
@@ -141,7 +141,8 @@ story += [P("5. Prometheus 플릿 헬스 메트릭", h1)]
 story += [P("플릿·안전 상태 스냅샷을 Prometheus 노출 형식 텍스트로 렌더링해 Grafana가 플릿 "
             "헬스(가동률·대기열·예약·E-stop·레일 하중·기울기)를 차트로 그릴 수 있게 한다. "
             "의존성 없이 노출 형식을 직접 생성하므로 prometheus_client 없이도 동작·테스트된다. "
-            "HTTP /metrics 엔드포인트는 이 위의 얇은 래퍼다.")]
+            "stdlib HTTP 서버가 이를 /metrics로 서빙하며(매 스크레이프마다 라이브 스냅샷), "
+            "7패널 Grafana 보드(fleet_health.json)가 함께 제공된다.")]
 story += codeblock([
     "# TYPE skyvolt_robots_busy gauge",
     "skyvolt_robots_busy 2",
@@ -149,7 +150,8 @@ story += codeblock([
     "skyvolt_jobs_completed_total 17",
     "skyvolt_estop_tripped 0      # 1 = tripped",
 ])
-story += [P("단위 테스트 7개(HELP/TYPE 방출·counter·bool→1/0·라벨·스냅샷 값).", cap)]
+story += [P("단위 테스트 12개(렌더 HELP/TYPE·counter·bool→1/0·라벨·스냅샷 값 / HTTP GET "
+            "/metrics 200·404·라이브 제공·Grafana JSON 검증).", cap)]
 
 # 6. OTA
 story += [P("6. OTA 펌웨어 업데이트 경로", h1)]
@@ -166,15 +168,16 @@ story += [table([
     ["파일", "구분", "내용"],
     ["skyvolt_safety/ (패키지)", "신규", "운영·안전 모니터 패키지(ament_python)"],
     ["load_monitor.py / estop.py", "신규", "하중·기울기 모니터(8) + 래칭 E-stop(9)"],
-    ["metrics.py / ota.py", "신규", "Prometheus 메트릭(7) + OTA 업데이트 FSM(9)"],
-    ["pytest.ini / run_tests.sh", "수정", "safety 테스트 경로 추가"],
+    ["metrics.py / metrics_server.py", "신규", "Prometheus 메트릭 + HTTP /metrics(12)"],
+    ["ota.py", "신규", "OTA 업데이트 FSM(9)"],
+    ["grafana/fleet_health.json", "신규", "7패널 플릿 헬스 대시보드"],
 ], [6.0 * cm, 1.8 * cm, 7.8 * cm])]
 
 # 8. 실행
 story += [P("8. 실행 방법", h1)]
 story += codeblock([
     "cd skyvolt_mvp",
-    "./scripts/run_tests.sh    # all tests (138, incl. 33 safety)",
+    "./scripts/run_tests.sh    # all tests (149, incl. 38 safety)",
     "python3 -c \"from skyvolt_safety import LoadMonitor, EStopChain, \\",
     "  OtaUpdater, fleet_health_text; ...\"",
 ])

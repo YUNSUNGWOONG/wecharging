@@ -10,6 +10,10 @@ from .port_pose import (
 from .servo import (
     VisualServo, ServoPhase, ServoCommand, ServoResult, simulate_insertion,
 )
+from .detector import (
+    CameraIntrinsics, deproject, detect_socket_corners,
+    detect_port_points, detect_port_pose,
+)
 
 __all__ = [
     "Pose6DoF",
@@ -23,4 +27,9 @@ __all__ = [
     "ServoCommand",
     "ServoResult",
     "simulate_insertion",
+    "CameraIntrinsics",
+    "deproject",
+    "detect_socket_corners",
+    "detect_port_points",
+    "detect_port_pose",
 ]
